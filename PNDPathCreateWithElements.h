@@ -61,3 +61,5 @@ typedef struct PNDPathElement {
 } PNDPathElement;
 
 CG_EXTERN CGPathRef PNDPathCreateWithElements(const PNDPathElement elements[], size_t count, const CGAffineTransform *transform);
+
+CG_EXTERN void PNDPathLogDescription(CGPathRef path);

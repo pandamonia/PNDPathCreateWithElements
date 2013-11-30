@@ -71,3 +71,40 @@ CGPathRef PNDPathCreateWithElements(const PNDPathElement elements[], size_t coun
 	
 	return path;
 }
+
+static void PNDDescribePath(void *info, const CGPathElement *element)
+{
+	CFMutableStringRef string = info;
+	switch (element->type) {
+		case kCGPathElementMoveToPoint:
+			CFStringAppendFormat(string, NULL, CFSTR("\tPND_PATH_ELEMENT(PNDPathElementTypeMoveToPoint, %f, %f),\n"), element->points[0].x, element->points[0].y);
+			break;
+			
+		case kCGPathElementAddLineToPoint:
+			CFStringAppendFormat(string, NULL, CFSTR("\tPND_PATH_ELEMENT(PNDPathElementTypeAddLineToPoint, %f, %f),\n"), element->points[0].x, element->points[0].y);
+			break;
+			
+		case kCGPathElementAddQuadCurveToPoint:
+			CFStringAppendFormat(string, NULL, CFSTR("\tPND_PATH_ELEMENT(PNDPathElementTypeAddQuadCurveToPoint, %f, %f, %f, %f),\n"), element->points[0].x, element->points[0].y, element->points[1].x, element->points[1].y);
+			break;
+			
+		case kCGPathElementAddCurveToPoint:
+			CFStringAppendFormat(string, NULL, CFSTR("\tPND_PATH_ELEMENT(PNDPathElementTypeAddCurveToPoint, %f, %f, %f, %f, %f, %f),\n"), element->points[0].x, element->points[0].y, element->points[1].x, element->points[1].y, element->points[2].x, element->points[2].y);
+			break;
+			
+		case kCGPathElementCloseSubpath:
+			CFStringAppend(string, CFSTR("\tPND_PATH_ELEMENT(PNDPathElementTypeCloseSubpath),\n"));
+			break;
+	}
+}
+
+void PNDPathLogDescription(CGPathRef path)
+{
+	CFMutableStringRef string = CFStringCreateMutable(kCFAllocatorSystemDefault, 0);
+	CFStringAppendFormat(string, NULL, CFSTR("static PNDPathElement elements_%p[] = {\n"), path);
+	
+	CGPathApply(path, string, &PNDDescribePath);
+	
+	CFStringAppend(string, CFSTR("};"));
+	CFShow(string);
+}
