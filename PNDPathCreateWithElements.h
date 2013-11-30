@@ -5,59 +5,59 @@
 //  Copyright (c) 2013 Pandamonia LLC. All rights reserved.
 //
 
-#define PND_PATH_ELEMENT_MOVE_TO_POINT(x, y) \
+@import CoreFoundation;
+@import CoreGraphics;
+
+#define PND_PATH_ELEMENT(_type, ...) \
 ((PNDPathElement){ \
-	.type = PNDPathElementTypeMoveToPoint, \
-	.points = { \
-		{ (x), (y) } \
-	} \
+	.type = _type, \
+	.values = { __VA_ARGS__ } \
 })
 
-#define PND_PATH_ELEMENT_ADD_LINE_TO_POINT(x, y) \
-((PNDPathElement){ \
-	.type = PNDPathElementTypeAddLineToPoint, \
-	.points = { \
-		{ (x), (y) } \
-	} \
-})
+#define PND_PATH_ELEMENTS_COUNT(elements) (sizeof(elements)/sizeof(*elements))
 
-#define PND_PATH_ELEMENT_ADD_QUAD_CURVE_TO_POINT(cpx, cpy, x, y) \
-((PNDPathElement){ \
-	.type = PNDPathElementTypeAddQuadCurveToPoint, \
-	.points = { \
-		{ (cpx), (cpy) }, \
-		{ (x), (y) } \
-	} \
-})
-
-#define PND_PATH_ELEMENT_ADD_CURVE_TO_POINT(cp1x, cp1y, cp2x, cp2y, x, y) \
-((PNDPathElement){ \
-	.type = PNDPathElementTypeAddCurveToPoint, \
-	.points = { \
-		{ (cp1x), (cp1y) }, \
-		{ (cp2x), (cp2y) }, \
-		{ (x), (y) } \
-	} \
-})
-
-#define PND_PATH_ELEMENT_CLOSE_SUBPATH() \
-((PNDPathElement){ \
-	.type = PNDPathElementTypeCloseSubpath, \
-	.points = {} \
-})
-
-
-typedef NS_ENUM(NSUInteger, PNDPathElementType) {
-	PNDPathElementTypeMoveToPoint         = kCGPathElementMoveToPoint,
-	PNDPathElementTypeAddLineToPoint      = kCGPathElementAddLineToPoint,
+typedef CF_ENUM(CFIndex, PNDPathElementType) {
+	// A path element that calls CGPathMoveToPoint.
+	PNDPathElementTypeMoveToPoint = kCGPathElementMoveToPoint,
+	
+	// A path element that calls CGPathAddLineToPoint.
+	PNDPathElementTypeAddLineToPoint = kCGPathElementAddLineToPoint,
+	
+	// A path element that calls CGPathAddQuadCurveToPoint.
 	PNDPathElementTypeAddQuadCurveToPoint = kCGPathElementAddQuadCurveToPoint,
-	PNDPathElementTypeAddCurveToPoint     = kCGPathElementAddCurveToPoint,
-	PNDPathElementTypeCloseSubpath        = kCGPathElementCloseSubpath
+	
+	// A path element that calls CGPathAddCurveToPoint.
+	PNDPathElementTypeAddCurveToPoint = kCGPathElementAddCurveToPoint,
+	
+	// A path element that calls CGPathCloseSubpath.
+	PNDPathElementTypeCloseSubpath = kCGPathElementCloseSubpath,
+	
+	// A path element that calls CGPathAddRoundedRect.
+	PNDPathElementTypeAddRoundedRect = 1000,
+	
+	// A path element that calls CGPathAddRect.
+	PNDPathElementTypeAddRect,
+	
+	// A path element that calls CGPathAddEllipseInRect.
+	PNDPathElementTypeAddEllipseInRect,
+	
+	// A path element that calls CGPathAddRelativeArc.
+	PNDPathElementTypeAddRelativeArc,
+	
+	// A path element that calls CGPathAddArc with the clockwise argument set to true.
+	PNDPathElementTypeAddArcClockwise,
+	
+	// A path element that calls CGPathAddArc with the clockwise argument set to false.
+	PNDPathElementTypeAddArcCounterclockwise,
+	
+	// A path element that calls CGPathAddArcToPoint.
+	PNDPathElementTypeAddArcToPoint
 };
 
+// A data structure that provides information about a path element.
 typedef struct PNDPathElement {
 	PNDPathElementType type;
-	CGPoint points[3];
+	CGFloat values[6];
 } PNDPathElement;
 
-extern CGPathRef PNDPathCreateWithElements(const PNDPathElement elements[], size_t count, const CGAffineTransform *transform);
+CG_EXTERN CGPathRef PNDPathCreateWithElements(const PNDPathElement elements[], size_t count, const CGAffineTransform *transform);
