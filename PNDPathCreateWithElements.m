@@ -35,7 +35,6 @@ CGPathRef PNDPathCreateWithElements(const PNDPathElement elements[], size_t coun
 				CGPathCloseSubpath(mutablePath);
 				break;
 				
-				
 			case PNDPathElementTypeAddRoundedRect:
 				CGPathAddRoundedRect(mutablePath, NULL, (CGRect){ element.values[0], element.values[1], element.values[2], element.values[3] }, element.values[4], element.values[5]);
 				break;
